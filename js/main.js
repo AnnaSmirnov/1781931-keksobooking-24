@@ -7,9 +7,7 @@ function getRandomInteger(min, max) {
     return max;
   }
   if (max < min) {
-    const change = max;
-    max = min;
-    min = change;
+    [min, max] = [max, min];
   }
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
@@ -25,12 +23,10 @@ function getRandomFloat(min, max, numberOfDecimalPlace) {
     return max;
   }
   if (max < min) {
-    const change = max;
-    max = min;
-    min = change;
+    [min, max] = [max, min];
   }
-  const number = (Math.random() * (max - min) + min);
-  return number.toFixed(numberOfDecimalPlace);
+  const randomFloat = (Math.random() * (max - min) + min);
+  return randomFloat.toFixed(numberOfDecimalPlace);
 }
 
 getRandomFloat();
