@@ -36,8 +36,9 @@ const getRandomItemsArray = (array) => {
   const randomCount = getRandomInteger(1, array.length-1);
   const resultArray = [];
   for (let i = 0; i < randomCount; i++ ) {
-    const randomId = getRandomInteger(items.length-1);
+    const randomId = getRandomInteger(0,items.length-1);
     resultArray.push(items[randomId]);
+    items.splice(randomId, 1);
   }
   return resultArray;
 }
