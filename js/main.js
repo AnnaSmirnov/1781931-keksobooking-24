@@ -35,7 +35,7 @@ const getRandomItemsArray = (array) => {
   const items = array.slice();
   const randomCount = getRandomInteger(1, array.length-1);
   const resultArray = [];
-  for (let i = 0; i < randomCount; i++ ) {
+  for (let idx = 0; idx < randomCount; idx++ ) {
     const randomId = getRandomInteger(0,items.length-1);
     resultArray.push(items[randomId]);
     items.splice(randomId, 1);
@@ -136,4 +136,4 @@ const createChosenHousing = () =>
 
 const announcement = Array.from({length: CHOSEN_HOUSING_COUNT}, createChosenHousing);
 
-announcement();
+console.log(announcement);
