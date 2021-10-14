@@ -41,7 +41,7 @@ const getRandomItemsArray = (array) => {
     items.splice(randomId, 1);
   }
   return resultArray;
-}
+};
 
 // offer
 const INTEGER_PRICE = getRandomInteger(0, 100000);
@@ -82,7 +82,7 @@ const FEATURES_LIST = [
   'elevator',
   'conditioner',
 ];
-const FEATURES_LIST_NUMBER = getRandomItemsArray(FEATURES_LIST);
+const createRandomFeatures = () => getRandomItemsArray(FEATURES_LIST);
 
 
 const PHOTOS_LIST = [
@@ -90,7 +90,7 @@ const PHOTOS_LIST = [
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/brandon-hoogenboom-SNxQGWxZQi0.jpg',
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/claire-rendall-b6kAwr1i0Iw.jpg',
 ];
-const PHOTOS_LIST_NUMBER =  getRandomItemsArray(PHOTOS_LIST);
+const createRandomPhotos = () => getRandomItemsArray(PHOTOS_LIST);
 
 const LAT_NUMBER = getRandomFloat(35.65, 35.7, 5);
 
@@ -122,19 +122,18 @@ const createOffer = () => ({
   guests: NUMBER_GUESTS,
   checkin: CHECKIN_TIME_NUMBER,
   checkout: CHECKOUT_TIME_NUMBER,
-  features: FEATURES_LIST_NUMBER,
+  features: createRandomFeatures(),
   description: 'Здесь есть все для комфортного проживания.',
-  photos: PHOTOS_LIST_NUMBER,
+  photos: createRandomPhotos(),
 });
 
-const createChosenHousing = () => {
+const createChosenHousing = () =>
   ({
     author: createAuthor (),
     offer: createOffer(),
     location: createLocation(),
   });
-};
 
-Array.from({length: CHOSEN_HOUSING_COUNT}, createChosenHousing);
+const announcement = Array.from({length: CHOSEN_HOUSING_COUNT}, createChosenHousing);
 
-
+announcement();
