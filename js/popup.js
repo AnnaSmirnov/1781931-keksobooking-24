@@ -3,7 +3,7 @@ import {TITLES,TYPES_HOUSING,CHECKIN_TIME,CHECKOUT_TIME,FEATURES_LIST,DESCRIPTIO
 
 const ADVERT_COUNT = 10;
 
-const createAdvert =(index) => {
+const createAdvert =() => {
   const LAT_NUMBER = getRandomFloat(35.65, 35.7, 5);
   const LNG_NUMBER = getRandomFloat(139.7, 139.8, 5);
   const createAvatar = () => {
@@ -56,7 +56,7 @@ const advertListElement = document.querySelector('#map-canvas');
 
 const generateAdvert = (advert) => {
   const advertCard = advertTemplate.cloneNode(true);
-  advertTemplate.appenedChild(advertCard);
+  advertListElement.appenedChild(advertCard);
 
   const title = advert.offer.title;
   const titleElement = advertCard.querySelector('.popup__title');
@@ -141,8 +141,9 @@ const generateAdvert = (advert) => {
   }
 
   advertListFragment.appendChild(advertCard);
-
   advertListElement.appendChild(advertListFragment);
 };
 
-export {generateAdvert};
+const firstAdvertItem = createAdvert(1);
+
+export {generateAdvert,firstAdvertItem};
