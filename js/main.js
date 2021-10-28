@@ -1,8 +1,8 @@
 import './utils.js';
 import './data.js';
-import {generateAdvert,firstAdvertItem} from './popup.js';
-import {getInactiveForm,getAciveForm} from './form.js';
+import {generateAdvert} from './popup.js';
+import {makesPageInactive,makesPageActive} from './form.js';
 
-generateAdvert(firstAdvertItem);
-getInactiveForm();
-getAciveForm();
+generateAdvert();
+makesPageInactive();
+makesPageActive();

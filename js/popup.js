@@ -2,17 +2,17 @@ import {getRandomInteger, getRandomFloat, getRandomItemsArray,getRandomArrayElem
 import {TITLES,TYPES_HOUSING,CHECKIN_TIME,CHECKOUT_TIME,FEATURES_LIST,DESCRIPTION,PHOTOS_LIST} from './data.js';
 
 const ADVERT_COUNT = 10;
+const createAvatar = () => {
+  const avatarNumber = getRandomInteger(1, ADVERT_COUNT);
+  if (avatarNumber >= 10) {
+    return {avatar: `img/avatars/user${avatarNumber}.png`};
+  }
+  return {avatar: `img/avatars/user0${avatarNumber}.png`};
+};
 
 const createAdvert =() => {
   const LAT_NUMBER = getRandomFloat(35.65, 35.7, 5);
   const LNG_NUMBER = getRandomFloat(139.7, 139.8, 5);
-  const createAvatar = () => {
-    const avatarNumber = getRandomInteger(1, ADVERT_COUNT);
-    if (avatarNumber >= 10) {
-      return {avatar: `img/avatars/user${avatarNumber}.png`};
-    }
-    return {avatar: `img/avatars/user0${avatarNumber}.png`};
-  };
 
   return {
     author: {
@@ -41,23 +41,36 @@ Array.from({length: ADVERT_COUNT}, createAdvert);
 
 
 const houseType = {
-  flat: 'Квартира ',
+  flat: 'Квартира',
   bungalow: 'Бунгало',
   house: 'Дом',
   palace: 'Дворец',
   hotel: 'Отель',
 };
 
-const advertTemplate = document.querySelector('#card').content.querySelector('.popup');
-const advertListFragment = document.createDocumentFragment();
+const generateAdvert = (cards) => {
+  const mapCanvas = document.querySelector('#map-canvas');
+  const cardTemplate = document.querySelector('#card').content.querySelector('.popup');
+  const cardListFragment = document.createDocumentFragment();
 
-const advertListElement = document.querySelector('#map-canvas');
+  cards.forEach(({author, offer}) => {
+  const advertCard = cardTemplate.cloneNode(true);
+  advertCard.querySelector('.popup__title').textContent = offer.title;
+  advertCard.querySelector('.popup__text--address').textContent = offer.address;
+  advertCard.querySelector('.popup__text--price').textContent = `${offer.price} ₽/ночь`;
+  advertCard.querySelector('.popup__type').textContent = houseType[offer.type];
+  advertCard.querySelector('.popup__text--capacity').textContent = `${offer.rooms} комнат(ы) для ${offer.guests} гостей`;
+  advertCard.querySelector('.popup__text--time').textContent = `Заезд после ${offer.checkin}, выезд до ${offer.checkout}`;
+  advertCard.querySelector('.popup__description').textContent = offer.description;
+  advertCard.querySelector('.popup__avatar').src = author.avatar;
 
+  cardListFragment.appendChild(advertCard);
+  });
 
-const generateAdvert = (advert) => {
-  const advertCard = advertTemplate.cloneNode(true);
-  advertListElement.appenedChild(advertCard);
-
+  mapCanvas.appendChild(cardListFragment);
+  return cards;
+};
+/*
   const title = advert.offer.title;
   const titleElement = advertCard.querySelector('.popup__title');
   if (title) {
@@ -139,11 +152,6 @@ const generateAdvert = (advert) => {
   } else {
     avatarElement.remove();
   }
+*/
 
-  advertListFragment.appendChild(advertCard);
-  advertListElement.appendChild(advertListFragment);
-};
-
-const firstAdvertItem = createAdvert(1);
-
-export {generateAdvert,firstAdvertItem};
+export {generateAdvert};
