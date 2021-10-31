@@ -1,8 +1,7 @@
-import './utils.js';
-import './data.js';
-import {generateAdvert} from './popup.js';
+import {addAdvertsCards,adverts} from './popup.js';
 import {makesPageInactive,makesPageActive} from './form.js';
 
-generateAdvert();
+
+addAdvertsCards(adverts);
 makesPageInactive();
 makesPageActive();

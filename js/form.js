@@ -17,7 +17,7 @@ const makesPageInactive = () => {
 
 const makesPageActive = () => {
   adFormElements.forEach((element) => {
-    element.remonveAttribute('disabled');
+    element.removeAttribute('disabled');
   });
   adForm.classList.remove('ad-form--disabled');
   mapFilter.classList.remove('map__filters--disabled');
@@ -26,17 +26,13 @@ const makesPageActive = () => {
   });
 };
 
-document.addEventListener('DOMContentLoaded',() => {
-  makesPageActive();
-});
-
 export {makesPageInactive,makesPageActive};
 
 const titleInput = adForm.querySelector('#title');
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
 
-
+//Валидация заголовка объявления
 titleInput.addEventListener('input', () => {
   const valueLength = titleInput.value.length;
 
@@ -49,4 +45,24 @@ titleInput.addEventListener('input', () => {
   }
 
   titleInput.reportValidity();
+});
+
+//Валидация количества комнат
+
+const roomNumberSelectElement = adForm.querySelector('#room_number');
+const capacitySelectElement = adForm.querySelector('#capacity');
+
+capacitySelectElement.addEventListener('change', (evt) => {
+  if (roomNumberSelectElement.value === '1' && ['3', '2', '0'].includes(evt.target.value)) {
+    capacitySelectElement.setCustomValidity('Количество гостей: 1');
+  } else if (roomNumberSelectElement.value === '2' && ['3', '0'].includes(evt.target.value)) {
+    capacitySelectElement.setCustomValidity('Количество гостей: 1-2');
+  } else if (roomNumberSelectElement.value === '3' && ['0'].includes(evt.target.value)) {
+    capacitySelectElement.setCustomValidity('Количество гостей: 1-3');
+  } else if (roomNumberSelectElement.value === '100' && ['3', '2', '1'].includes(evt.target.value)) {
+    capacitySelectElement.setCustomValidity('Не для гостей');
+  } else {
+    capacitySelectElement.setCustomValidity('');
+  }
+  capacitySelectElement.reportValidity();
 });
