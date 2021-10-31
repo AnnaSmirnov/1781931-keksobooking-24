@@ -28,6 +28,11 @@ const getRandomFloat = (min, max, numberOfDecimalPlace) => {
   const randomFloat = (Math.random() * (max - min) + min);
   return randomFloat.toFixed(numberOfDecimalPlace);
 };
+//получить случайный элемент массива
+const getRandomArrayElement = (arr) => {
+  const randomIndex = Math.floor(Math.random() * arr.length);
+  return arr[randomIndex];
+};
 
 // Создание массива случайной длины
 const getRandomItemsArray = (array) => {
@@ -42,4 +47,4 @@ const getRandomItemsArray = (array) => {
   return resultArray;
 };
 
-export {getRandomInteger, getRandomFloat, getRandomItemsArray};
+export {getRandomInteger, getRandomFloat, getRandomItemsArray, getRandomArrayElement};
