@@ -46,7 +46,6 @@ const cardTemplate = document.querySelector('#card').content;
 const popup = cardTemplate.querySelector('.popup');
 const cards = [];
 
-
 function createAvatars(advertsArray) {
   for (let i = 0; i < advertsArray.length; i++) {
     if (advertsArray[i].author.avatar) {
@@ -86,7 +85,6 @@ function getFlatType(flatType) {
     return 'Отель';
   }
 }
-
 
 function createCards(advertsArray) {
   createAvatars(advertsArray);
