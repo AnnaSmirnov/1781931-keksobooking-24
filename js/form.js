@@ -51,54 +51,45 @@ titleInput.addEventListener('input', () => {
 const roomNumberSelectElement = adForm.querySelector('#room_number');
 const capacitySelectElement = adForm.querySelector('#capacity');
 
-capacitySelectElement.addEventListener('change', (evt) => {
-  if (roomNumberSelectElement.value === '1' && ['3', '2', '0'].includes(evt.target.value)) {
-    capacitySelectElement.setCustomValidity('Предложение для 1 гостя');
-  } else if (roomNumberSelectElement.value === '2' && ['3', '0'].includes(evt.target.value)) {
-    capacitySelectElement.setCustomValidity('Предложение для 1-2 гостей');
-  } else if (roomNumberSelectElement.value === '3' && ['0'].includes(evt.target.value)) {
-    capacitySelectElement.setCustomValidity('Предложение для 1-3 гостей');
-  } else if (roomNumberSelectElement.value === '100' && ['3', '2', '1'].includes(evt.target.value)) {
-    capacitySelectElement.setCustomValidity('Не для гостей');
-  } else {
-    capacitySelectElement.setCustomValidity('');
+roomNumberSelectElement.addEventListener('change', (evt) => {
+  const choosenValue = (evt.target.value === '100') ? '0' : evt.target.value;
+  for (let i = 0; i < capacitySelectElement.length; i++) {
+    capacitySelectElement[i].disabled = true;
+    if (capacitySelectElement[i].value === choosenValue) {
+      capacitySelectElement[i].disabled = false;
+    }
+    if (capacitySelectElement[i].value <= choosenValue && capacitySelectElement[i].value > 0) {
+      capacitySelectElement[i].disabled = false;
+    }
   }
-  capacitySelectElement.reportValidity();
 });
 
 //тип жилья
+const MIN_PRICE = {
+  bungalow: 0,
+  flat: 1000,
+  hotel: 3000,
+  house: 5000,
+  palace: 10000,
+};
 const typeSelectElement = document.querySelector('#type');
 const priceInputElement = document.querySelector('#price');
 
 typeSelectElement.addEventListener('change', (evt) => {
-  if (evt.target.value === 'flat') {
-    priceInputElement.setAttribute('placeholder', 1000);
-    priceInputElement.setAttribute('min', 1000);
-  } else if (evt.target.value === 'bungalow') {
-    priceInputElement.setAttribute('placeholder', 0);
-    priceInputElement.setAttribute('min', 0);
-  } else if (evt.target.value === 'house') {
-    priceInputElement.setAttribute('placeholder', 5000);
-    priceInputElement.setAttribute('min', 5000);
-  } else if (evt.target.value === 'palace') {
-    priceInputElement.setAttribute('placeholder', 10000);
-    priceInputElement.setAttribute('min', 10000);
-  } else if (evt.target.value === 'hotel') {
-    priceInputElement.setAttribute('placeholder', 3000);
-    priceInputElement.setAttribute('min', 3000);
-  }
+  const minPrice = MIN_PRICE[evt.target.value];
+  priceInputElement.min = minPrice;
+  priceInputElement.placeholder = minPrice;
 });
+
 
 //синхронизация времени
 const timeinSelectElement = document.querySelector('#timein');
 const timeoutSelectElement = document.querySelector('#timeout');
 
 timeinSelectElement.addEventListener('change', (evt) => {
-  if (evt.target.value === '12:00') {
-    timeoutSelectElement.value = '12:00';
-  } else if (evt.target.value === '13:00') {
-    timeoutSelectElement.value = '13:00';
-  } else if (evt.target.value === '14:00') {
-    timeoutSelectElement.value = '14:00';
-  }
+  timeoutSelectElement.value = evt.target.value;
+});
+
+timeoutSelectElement.addEventListener('change', (evt) => {
+  timeinSelectElement.value = evt.target.value;
 });
