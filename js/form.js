@@ -50,37 +50,83 @@ titleInput.addEventListener('input', () => {
 //Валидация количества комнат
 const roomNumberSelectElement = adForm.querySelector('#room_number');
 const capacitySelectElement = adForm.querySelector('#capacity');
+const capacityOptionList = capacitySelectElement.querySelectorAll('option');
 
-roomNumberSelectElement.addEventListener('change', (evt) => {
-  const choosenValue = (evt.target.value === '100') ? '0' : evt.target.value;
-  for (let i = 0; i < capacitySelectElement.length; i++) {
-    capacitySelectElement[i].disabled = true;
-    if (capacitySelectElement[i].value === choosenValue) {
-      capacitySelectElement[i].disabled = false;
-    }
-    if (capacitySelectElement[i].value <= choosenValue && capacitySelectElement[i].value > 0) {
-      capacitySelectElement[i].disabled = false;
-    }
+const roomSelectChange = () => {
+  const updateOptions = (optionList) => {
+    capacityOptionList.forEach((option) => {
+      if (optionList.includes(option.value)) {
+        option.removeAttribute('disabled');
+      }
+      else {
+        option.setAttribute('disabled', '');
+        if (capacitySelectElement.value === option.value) {
+          capacitySelectElement.value = '';
+        }
+      }
+    });
+  };
+  switch(roomNumberSelectElement.value) {
+    case '1':
+      updateOptions(['1']);
+      break;
+    case '2':
+      updateOptions(['1', '2']);
+      break;
+    case '3':
+      updateOptions(['1', '2', '3']);
+      break;
+    case '100':
+      updateOptions(['0']);
+      break;
   }
-});
+};
+roomNumberSelectElement.addEventListener('change', roomSelectChange);
 
 //тип жилья
-const MIN_PRICE = {
-  bungalow: 0,
-  flat: 1000,
-  hotel: 3000,
-  house: 5000,
-  palace: 10000,
-};
 const typeSelectElement = document.querySelector('#type');
 const priceInputElement = document.querySelector('#price');
 
-typeSelectElement.addEventListener('change', (evt) => {
-  const minPrice = MIN_PRICE[evt.target.value];
-  priceInputElement.min = minPrice;
-  priceInputElement.placeholder = minPrice;
+const validatePrice = () => {
+  if (Number(priceInputElement.value) < priceInputElement.min) {
+    priceInputElement.setCustomValidity(`Минимальная цена ${priceInputElement.min}`);
+  }
+  else {
+    priceInputElement.setCustomValidity('');
+  }
+  priceInputElement.reportValidity();
+};
+priceInputElement.addEventListener('input', () => {
+  validatePrice();
 });
 
+const houseTypeSelectChange = () => {
+  const setMinPrice = (minPrice) => {
+    priceInputElement.min = minPrice;
+    priceInputElement.placeholder = minPrice;
+  };
+  let minValidatorValue;
+  switch(typeSelectElement.value) {
+    case 'bungalow':
+      minValidatorValue = 0;
+      break;
+    case 'flat':
+      minValidatorValue = 1000;
+      break;
+    case 'hotel':
+      minValidatorValue = 3000;
+      break;
+    case 'house':
+      minValidatorValue = 5000;
+      break;
+    case 'palace':
+      minValidatorValue = 10000;
+      break;
+  }
+  setMinPrice(minValidatorValue);
+  validatePrice();
+};
+typeSelectElement.addEventListener('change', houseTypeSelectChange);
 
 //синхронизация времени
 const timeinSelectElement = document.querySelector('#timein');
