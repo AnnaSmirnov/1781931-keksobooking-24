@@ -37,9 +37,9 @@ titleInput.addEventListener('input', () => {
   const valueLength = titleInput.value.length;
 
   if (valueLength < MIN_TITLE_LENGTH) {
-    titleInput.setCustomValidity(`Ещё ${  MIN_TITLE_LENGTH - valueLength } символов`);
+    titleInput.setCustomValidity(`Ещё ${MIN_TITLE_LENGTH - valueLength} символов`);
   } else if (valueLength > MAX_TITLE_LENGTH) {
-    titleInput.setCustomValidity(`Удалите лишние ${  valueLength - MAX_TITLE_LENGTH } символов`);
+    titleInput.setCustomValidity(`Удалите лишние ${valueLength - MAX_TITLE_LENGTH} символов`);
   } else {
     titleInput.setCustomValidity('');
   }
@@ -48,21 +48,94 @@ titleInput.addEventListener('input', () => {
 });
 
 //Валидация количества комнат
-
 const roomNumberSelectElement = adForm.querySelector('#room_number');
 const capacitySelectElement = adForm.querySelector('#capacity');
+const capacityOptionList = capacitySelectElement.querySelectorAll('option');
 
-capacitySelectElement.addEventListener('change', (evt) => {
-  if (roomNumberSelectElement.value === '1' && ['3', '2', '0'].includes(evt.target.value)) {
-    capacitySelectElement.setCustomValidity('Количество гостей: 1');
-  } else if (roomNumberSelectElement.value === '2' && ['3', '0'].includes(evt.target.value)) {
-    capacitySelectElement.setCustomValidity('Количество гостей: 1-2');
-  } else if (roomNumberSelectElement.value === '3' && ['0'].includes(evt.target.value)) {
-    capacitySelectElement.setCustomValidity('Количество гостей: 1-3');
-  } else if (roomNumberSelectElement.value === '100' && ['3', '2', '1'].includes(evt.target.value)) {
-    capacitySelectElement.setCustomValidity('Не для гостей');
-  } else {
-    capacitySelectElement.setCustomValidity('');
+const roomSelectChange = () => {
+  const updateOptions = (optionList) => {
+    capacityOptionList.forEach((option) => {
+      if (optionList.includes(option.value)) {
+        option.removeAttribute('disabled');
+      }
+      else {
+        option.setAttribute('disabled', '');
+        if (capacitySelectElement.value === option.value) {
+          capacitySelectElement.value = '';
+        }
+      }
+    });
+  };
+  switch(roomNumberSelectElement.value) {
+    case '1':
+      updateOptions(['1']);
+      break;
+    case '2':
+      updateOptions(['1', '2']);
+      break;
+    case '3':
+      updateOptions(['1', '2', '3']);
+      break;
+    case '100':
+      updateOptions(['0']);
+      break;
   }
-  capacitySelectElement.reportValidity();
+};
+roomNumberSelectElement.addEventListener('change', roomSelectChange);
+
+//тип жилья
+const typeSelectElement = document.querySelector('#type');
+const priceInputElement = document.querySelector('#price');
+
+const validatePrice = () => {
+  if (Number(priceInputElement.value) < priceInputElement.min) {
+    priceInputElement.setCustomValidity(`Минимальная цена ${priceInputElement.min}`);
+  }
+  else {
+    priceInputElement.setCustomValidity('');
+  }
+  priceInputElement.reportValidity();
+};
+priceInputElement.addEventListener('input', () => {
+  validatePrice();
+});
+
+const houseTypeSelectChange = () => {
+  const setMinPrice = (minPrice) => {
+    priceInputElement.min = minPrice;
+    priceInputElement.placeholder = minPrice;
+  };
+  let minValidatorValue;
+  switch(typeSelectElement.value) {
+    case 'bungalow':
+      minValidatorValue = 0;
+      break;
+    case 'flat':
+      minValidatorValue = 1000;
+      break;
+    case 'hotel':
+      minValidatorValue = 3000;
+      break;
+    case 'house':
+      minValidatorValue = 5000;
+      break;
+    case 'palace':
+      minValidatorValue = 10000;
+      break;
+  }
+  setMinPrice(minValidatorValue);
+  validatePrice();
+};
+typeSelectElement.addEventListener('change', houseTypeSelectChange);
+
+//синхронизация времени
+const timeinSelectElement = document.querySelector('#timein');
+const timeoutSelectElement = document.querySelector('#timeout');
+
+timeinSelectElement.addEventListener('change', (evt) => {
+  timeoutSelectElement.value = evt.target.value;
+});
+
+timeoutSelectElement.addEventListener('change', (evt) => {
+  timeinSelectElement.value = evt.target.value;
 });
