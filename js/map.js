@@ -1,9 +1,9 @@
 import {makesPageInactive, makesPageActive} from './form.js';
+import {createCard} from './popup.js';
 
 
 const MAP_CENTER_LAT = 35.68390;
 const MAP_CENTER_LNG = 139.75323;
-
 const address = document.querySelector('#address');
 
 makesPageInactive();
@@ -45,5 +45,63 @@ const mainPinMarker = L.marker(
 );
 mainPinMarker.addTo(map);
 
-address.value =`${MAP_CENTER_LAT}, ${MAP_CENTER_LNG}`;
+//  Получение координат
+mainPinMarker.on('moveend', (evt) => {
+  const mainPinLocation = evt.target.getLatLng();
+  const coordinates = `${(mainPinLocation.lat).toFixed(5)}, ${(mainPinLocation.lng).toFixed(5)}`;
+  address.value = coordinates;
+});
 
+
+// Возвращает метку и карту к исходному состоянию
+const resetMap = () => {
+  map.setView({
+    lat: MAP_CENTER_LAT,
+    lng: MAP_CENTER_LAT,
+  }, 10);
+  mainPinMarker.setLatLng({
+    lat: MAP_CENTER_LAT,
+    lng: MAP_CENTER_LAT,
+  });
+  address.value =`${MAP_CENTER_LAT}, ${MAP_CENTER_LNG}`;
+};
+
+//создание popup
+const createCustomPopup = (point) => {
+  const balloonTemplate = document.querySelector('#card').content.querySelector('.popup');
+  const popupElement = balloonTemplate.cloneNode(true);
+  createCard(point, popupElement);
+
+  return popupElement;
+};
+
+// Отображение меток объявлений
+const  createPointsOfMap = (data) => {
+  data.forEach((offer) => {
+    const lat = offer.location.lat;
+    const lng = offer.location.lng;
+    const icon = L.icon({
+      iconUrl: 'img/pin.svg',
+      iconSize: [40, 40],
+      iconAnchor: [20, 40],
+    });
+
+    const marker = L.marker(
+      {
+        lat,
+        lng,
+      },
+      {
+        icon,
+      },
+    );
+    marker
+      .addTo(map)
+      .bindPopup(createCustomPopup(offer));
+  });
+};
+
+export {
+  createPointsOfMap,
+  resetMap
+};

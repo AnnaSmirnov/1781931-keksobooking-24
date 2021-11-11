@@ -86,7 +86,7 @@ const getFlatType = (flatType) => {
   }
 };
 
-const createCards = (advertsArray) => {
+const createCard = (advertsArray) => {
   createAvatars(advertsArray);
   createImages(advertsArray);
   for (let i = 0; i < advertsArray.length; i++) {
@@ -140,6 +140,6 @@ function addAdvertsCards(advertsArray) {
 }
 */
 export {
-  createCards,adverts
+  createCard,adverts
 };
 
