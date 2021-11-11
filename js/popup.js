@@ -42,11 +42,11 @@ for (let i = 0; i < ADVERT_COUNT; i++) {
   adverts[i] = createAdvert(i);
 }
 
-const cardTemplate = document.querySelector('#card').content;
-const popup = cardTemplate.querySelector('.popup');
+//const cardTemplate = document.querySelector('#card').content;
+//const popup = cardTemplate.querySelector('.popup');
 const cards = [];
 
-function createAvatars(advertsArray) {
+const createAvatars = (advertsArray) => {
   for (let i = 0; i < advertsArray.length; i++) {
     if (advertsArray[i].author.avatar) {
       cards[i].querySelector('.popup__avatar').src = advertsArray[i].author.avatar;
@@ -54,9 +54,9 @@ function createAvatars(advertsArray) {
       cards[i].querySelector('.popup__avatar').remove();
     }
   }
-}
+};
 
-function createImages(advertsArray) {
+const createImages = (advertsArray) => {
   for (let i = 0; i < advertsArray.length; i++) {
     const photos = cards[i].querySelector('.popup__photos');
     const photo = photos.querySelector('.popup__photo');
@@ -70,9 +70,9 @@ function createImages(advertsArray) {
     }
     photo.remove();
   }
-}
+};
 
-function getFlatType(flatType) {
+const getFlatType = (flatType) => {
   if (flatType === 'flat') {
     return 'Квартира';
   } else if (flatType === 'bungalow') {
@@ -84,9 +84,9 @@ function getFlatType(flatType) {
   } else if (flatType === 'hotel') {
     return 'Отель';
   }
-}
+};
 
-function createCards(advertsArray) {
+const createCards = (advertsArray) => {
   createAvatars(advertsArray);
   createImages(advertsArray);
   for (let i = 0; i < advertsArray.length; i++) {
@@ -127,8 +127,9 @@ function createCards(advertsArray) {
       cards[i].querySelector('.popup__description').remove();
     }
   }
-}
+};
 
+/*
 function addAdvertsCards(advertsArray) {
   for (let i = 0; i < advertsArray.length; i++) {
     cards[i] = popup.cloneNode(true);
@@ -137,7 +138,8 @@ function addAdvertsCards(advertsArray) {
   const mapCanvas = document.querySelector('#map-canvas');
   mapCanvas.appendChild(cards[0]);
 }
-
+*/
 export {
-  addAdvertsCards,adverts
+  createCards,adverts
 };
+

@@ -3,7 +3,20 @@ const adFormElements = adForm.querySelectorAll('.ad-form__element');
 const mapFilter = document.querySelector('.map__filters');
 const mapFilterElements = mapFilter.querySelectorAll('.map__filter');
 
+const titleInput = adForm.querySelector('#title');
+const MIN_TITLE_LENGTH = 30;
+const MAX_TITLE_LENGTH = 100;
 
+const roomNumberSelectElement = adForm.querySelector('#room_number');
+const capacitySelectElement = adForm.querySelector('#capacity');
+
+const typeSelectElement = document.querySelector('#type');
+const priceInputElement = document.querySelector('#price');
+
+const timeinSelectElement = document.querySelector('#timein');
+const timeoutSelectElement = document.querySelector('#timeout');
+
+//активный и неактивный режим
 const makesPageInactive = () => {
   adFormElements.forEach((element) => {
     element.setAttribute('disabled', '');
@@ -26,14 +39,8 @@ const makesPageActive = () => {
   });
 };
 
-export {makesPageInactive,makesPageActive};
-
-const titleInput = adForm.querySelector('#title');
-const MIN_TITLE_LENGTH = 30;
-const MAX_TITLE_LENGTH = 100;
-
 //Валидация заголовка объявления
-titleInput.addEventListener('input', () => {
+const titleValidate = () => {
   const valueLength = titleInput.value.length;
 
   if (valueLength < MIN_TITLE_LENGTH) {
@@ -43,50 +50,40 @@ titleInput.addEventListener('input', () => {
   } else {
     titleInput.setCustomValidity('');
   }
-
   titleInput.reportValidity();
-});
+};
 
 //Валидация количества комнат
-const roomNumberSelectElement = adForm.querySelector('#room_number');
-const capacitySelectElement = adForm.querySelector('#capacity');
-const capacityOptionList = capacitySelectElement.querySelectorAll('option');
-
 const roomSelectChange = () => {
-  const updateOptions = (optionList) => {
-    capacityOptionList.forEach((option) => {
-      if (optionList.includes(option.value)) {
-        option.removeAttribute('disabled');
-      }
-      else {
-        option.setAttribute('disabled', '');
-        if (capacitySelectElement.value === option.value) {
-          capacitySelectElement.value = '';
-        }
-      }
-    });
-  };
+  const choosenValue = (roomNumberSelectElement.value === '100') ? '0' : roomNumberSelectElement.value;
+  for (let i = 0; i < capacitySelectElement.length; i++) {
+    capacitySelectElement[i].disabled = true;
+    if (capacitySelectElement[i].value === choosenValue) {
+      capacitySelectElement[i].disabled = false;
+    }
+    if (capacitySelectElement[i].value <= choosenValue && capacitySelectElement[i].value > 0) {
+      capacitySelectElement[i].disabled = false;
+    }
+  }
+
   switch(roomNumberSelectElement.value) {
     case '1':
-      updateOptions(['1']);
+      choosenValue(['1']);
       break;
     case '2':
-      updateOptions(['1', '2']);
+      choosenValue(['1', '2']);
       break;
     case '3':
-      updateOptions(['1', '2', '3']);
+      choosenValue(['1', '2', '3']);
       break;
     case '100':
-      updateOptions(['0']);
+      choosenValue(['0']);
       break;
   }
+  capacitySelectElement.reportValidity();
 };
-roomNumberSelectElement.addEventListener('change', roomSelectChange);
 
 //тип жилья
-const typeSelectElement = document.querySelector('#type');
-const priceInputElement = document.querySelector('#price');
-
 const validatePrice = () => {
   if (Number(priceInputElement.value) < priceInputElement.min) {
     priceInputElement.setCustomValidity(`Минимальная цена ${priceInputElement.min}`);
@@ -126,16 +123,20 @@ const houseTypeSelectChange = () => {
   setMinPrice(minValidatorValue);
   validatePrice();
 };
-typeSelectElement.addEventListener('change', houseTypeSelectChange);
 
 //синхронизация времени
-const timeinSelectElement = document.querySelector('#timein');
-const timeoutSelectElement = document.querySelector('#timeout');
+const timeinChange = () => {
+  timeoutSelectElement.value =  timeinSelectElement.value;
+};
 
-timeinSelectElement.addEventListener('change', (evt) => {
-  timeoutSelectElement.value = evt.target.value;
-});
+const timeoutChange = () => {
+  timeinSelectElement.value = timeoutSelectElement.value;
+};
 
-timeoutSelectElement.addEventListener('change', (evt) => {
-  timeinSelectElement.value = evt.target.value;
-});
+roomNumberSelectElement.addEventListener('change', roomSelectChange);
+typeSelectElement.addEventListener('change', houseTypeSelectChange);
+titleInput.addEventListener('input', titleValidate);
+timeinSelectElement.addEventListener('change', timeinChange);
+timeoutSelectElement.addEventListener('change', timeoutChange);
+
+export {makesPageInactive,makesPageActive};
