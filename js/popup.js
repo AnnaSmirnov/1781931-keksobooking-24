@@ -130,7 +130,7 @@ const createCard = (advertsArray) => {
 };
 
 /*
-function addAdvertsCards(advertsArray) {
+const addAdvertsCards = (advertsArray) => {
   for (let i = 0; i < advertsArray.length; i++) {
     cards[i] = popup.cloneNode(true);
   }
@@ -139,7 +139,5 @@ function addAdvertsCards(advertsArray) {
   mapCanvas.appendChild(cards[0]);
 }
 */
-export {
-  createCard,adverts
-};
+export {createCard,adverts};
 

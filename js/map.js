@@ -77,9 +77,13 @@ const createCustomPopup = (point) => {
 
 // Отображение меток объявлений
 const  createPointsOfMap = (data) => {
-  data.forEach((offer) => {
-    const lat = offer.location.lat;
-    const lng = offer.location.lng;
+  data.forEach((point) => {
+    const {
+      location: {
+        lat,
+        lng,
+      },
+    } = point;
     const icon = L.icon({
       iconUrl: 'img/pin.svg',
       iconSize: [40, 40],
@@ -97,7 +101,7 @@ const  createPointsOfMap = (data) => {
     );
     marker
       .addTo(map)
-      .bindPopup(createCustomPopup(offer));
+      .bindPopup(createCustomPopup(point));
   });
 };
 
