@@ -52,7 +52,6 @@ mainPinMarker.on('moveend', (evt) => {
   address.value = coordinates;
 });
 
-
 // Возвращает метку и карту к исходному состоянию
 const resetMap = () => {
   map.setView({
@@ -105,7 +104,4 @@ const  createPointsOfMap = (data) => {
   });
 };
 
-export {
-  createPointsOfMap,
-  resetMap
-};
+export {createPointsOfMap,resetMap,MAP_CENTER_LAT,MAP_CENTER_LNG};

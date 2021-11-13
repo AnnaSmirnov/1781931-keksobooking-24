@@ -1,6 +1,6 @@
-import {getRandomInteger, getRandomFloat, getRandomItemsArray,getRandomArrayElement} from './utils.js';
-import {TITLES,TYPES_HOUSING,CHECKIN_TIME,CHECKOUT_TIME,FEATURES_LIST,DESCRIPTION,PHOTOS_LIST} from './data.js';
-
+//import {getRandomInteger, getRandomFloat, getRandomItemsArray,getRandomArrayElement} from './utils.js';
+//import {TITLES,TYPES_HOUSING,CHECKIN_TIME,CHECKOUT_TIME,FEATURES_LIST,DESCRIPTION,PHOTOS_LIST} from './data.js';
+/*
 const ADVERT_COUNT = 10;
 
 const createAvatar = () => {
@@ -37,39 +37,30 @@ const createAdvert =() => {
   };
 };
 
-const adverts = [];
-for (let i = 0; i < ADVERT_COUNT; i++) {
-  adverts[i] = createAdvert(i);
-}
-
+*/
 //const cardTemplate = document.querySelector('#card').content;
 //const popup = cardTemplate.querySelector('.popup');
-const cards = [];
 
-const createAvatars = (advertsArray) => {
-  for (let i = 0; i < advertsArray.length; i++) {
-    if (advertsArray[i].author.avatar) {
-      cards[i].querySelector('.popup__avatar').src = advertsArray[i].author.avatar;
-    } else {
-      cards[i].querySelector('.popup__avatar').remove();
-    }
+const createAvatars = (advert, cardElement) => {
+  if (advert.author.avatar) {
+    cardElement.querySelector('.popup__avatar').src = advert.author.avatar;
+  } else {
+    cardElement.querySelector('.popup__avatar').remove();
   }
 };
 
-const createImages = (advertsArray) => {
-  for (let i = 0; i < advertsArray.length; i++) {
-    const photos = cards[i].querySelector('.popup__photos');
-    const photo = photos.querySelector('.popup__photo');
-    if (advertsArray[i].offer.photos === undefined || advertsArray[i].offer.photos.length === 0) {
-      photos.remove();
-    }
-    for (let k = 0; k < advertsArray[i].offer.photos.length; k++) {
-      const clonedPhoto = photo.cloneNode();
-      clonedPhoto.src = advertsArray[i].offer.photos[k];
-      photos.appendChild(clonedPhoto);
-    }
-    photo.remove();
+const createImages = (advert, cardElement) => {
+  const photos =  cardElement.querySelector('.popup__photos');
+  const photo = photos.querySelector('.popup__photo');
+  if (advert.offer.photos === undefined || advert.offer.photos.length === 0) {
+    photos.remove();
   }
+  for (let k = 0; k < advert.offer.photos.length; k++) {
+    const clonedPhoto = photo.cloneNode();
+    clonedPhoto.src = advert.offer.photos[k];
+    photos.appendChild(clonedPhoto);
+  }
+  photo.remove();
 };
 
 const getFlatType = (flatType) => {
@@ -86,58 +77,61 @@ const getFlatType = (flatType) => {
   }
 };
 
-const createCard = (advertsArray) => {
-  createAvatars(advertsArray);
-  createImages(advertsArray);
-  for (let i = 0; i < advertsArray.length; i++) {
-    if (advertsArray[i].offer.title) {
-      cards[i].querySelector('.popup__title').textContent = advertsArray[i].offer.title;
+const createCard = (advert, cardElement) => {
+  createAvatars(advert, cardElement);
+  createImages(advert, cardElement);
+  for (let i = 0; i < advert.length; i++) {
+    if (advert.offer.title) {
+      cardElement.querySelector('.popup__title').textContent = advert.offer.title;
     } else {
-      cards[i].querySelector('.popup__title').remove();
+      cardElement.querySelector('.popup__title').remove();
     }
-    if (advertsArray[i].offer.address) {
-      cards[i].querySelector('.popup__text--address').textContent = advertsArray[i].offer.address;
+    if (advert.offer.address) {
+      cardElement.querySelector('.popup__text--address').textContent = advert.offer.address;
     } else {
-      cards[i].querySelector('.popup__text--address').remove();
+      cardElement.querySelector('.popup__text--address').remove();
     }
-    if (advertsArray[i].offer.price) {
-      cards[i].querySelector('.popup__text--price').textContent = `${advertsArray[i].offer.price} ₽/ночь`;
+    if (advert.offer.price) {
+      cardElement.querySelector('.popup__text--price').textContent = `${advert.offer.price} ₽/ночь`;
     } else {
-      cards[i].querySelector('.popup__text--price').remove();
+      cardElement.querySelector('.popup__text--price').remove();
     }
-    if (advertsArray[i].offer.type) {
-      cards[i].querySelector('.popup__type').textContent = getFlatType(advertsArray[i].offer.type);
+    if (advert.offer.type) {
+      cardElement.querySelector('.popup__type').textContent = getFlatType(advert.offer.type);
     } else {
-      cards[i].querySelector('.popup__type').remove();
+      cardElement.querySelector('.popup__type').remove();
     }
-    if (advertsArray[i].offer.rooms && advertsArray[i].offer.guests) {
-      cards[i].querySelector('.popup__text--capacity').textContent = `${advertsArray[i].offer.rooms} комнаты для
-    ${advertsArray[i].offer.guests} гостей`;
+    if (advert.offer.rooms && advert.offer.guests) {
+      cardElement.querySelector('.popup__text--capacity').textContent = `${advert.offer.rooms} комнаты для
+    ${advert.offer.guests} гостей`;
     } else {
-      cards[i].querySelector('.popup__text--capacity').remove();
+      cardElement.querySelector('.popup__text--capacity').remove();
     }
-    if (advertsArray[i].offer.checkin && advertsArray[i].offer.checkout) {
-      cards[i].querySelector('.popup__text--time').textContent = `Заезд после ${advertsArray[i].offer.checkin}, выезд до ${advertsArray[i].offer.checkout}`;
+    if (advert.offer.checkin && advert.offer.checkout) {
+      cardElement.querySelector('.popup__text--time').textContent = `Заезд после ${advert.offer.checkin}, выезд до ${advert.offer.checkout}`;
     } else {
-      cards[i].querySelector('.popup__text--time').remove();
+      cardElement.querySelector('.popup__text--time').remove();
     }
-    if (advertsArray[i].offer.description) {
-      cards[i].querySelector('.popup__description').textContent = advertsArray[i].offer.description;
+    if (advert.offer.description) {
+      cardElement.querySelector('.popup__description').textContent = advert.offer.description;
     } else {
-      cards[i].querySelector('.popup__description').remove();
+      cardElement.querySelector('.popup__description').remove();
     }
   }
 };
 
 /*
+const adverts = [];
+for (let i = 0; i < 10; i++) {
+  adverts[i] = createCard(i);
+}
+
 const addAdvertsCards = (advertsArray) => {
   for (let i = 0; i < advertsArray.length; i++) {
     cards[i] = popup.cloneNode(true);
   }
-  createCards(advertsArray);
-  const mapCanvas = document.querySelector('#map-canvas');
-  mapCanvas.appendChild(cards[0]);
-}
+  createCard(advertsArray, cards);
+};
 */
-export {createCard,adverts};
+export {createCard};
 

@@ -1,3 +1,5 @@
+import {sendData} from './api.js';
+import {resetMap,MAP_CENTER_LAT,MAP_CENTER_LNG} from './map';
 const adForm = document.querySelector('.ad-form');
 const adFormElements = adForm.querySelectorAll('.ad-form__element');
 const mapFilter = document.querySelector('.map__filters');
@@ -15,6 +17,7 @@ const priceInputElement = document.querySelector('#price');
 
 const timeinSelectElement = document.querySelector('#timein');
 const timeoutSelectElement = document.querySelector('#timeout');
+const resetButton = adForm.querySelector('.ad-form__reset');
 
 //активный и неактивный режим
 const makesPageInactive = () => {
@@ -121,7 +124,6 @@ const houseTypeSelectChange = () => {
       break;
   }
   setMinPrice(minValidatorValue);
-  validatePrice();
 };
 
 //синхронизация времени
@@ -133,10 +135,33 @@ const timeoutChange = () => {
   timeinSelectElement.value = timeoutSelectElement.value;
 };
 
+const resetForm = () => {
+  document.querySelector('.ad-form').reset();
+  document.querySelector('.map__filters').reset();
+  document.querySelector('#address').value = `${MAP_CENTER_LAT}, ${MAP_CENTER_LNG}`;
+};
+
+const setFormSubmit = (onSuccess, onError) => {
+  adForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+
+    sendData(
+      () => onSuccess(evt.target.reset(), resetForm()),
+      () => onError(),
+      new FormData(evt.target),
+    );
+  });
+};
+
+resetButton.addEventListener('click', (evt) => {
+  evt.preventDefault();
+  resetMap();
+});
+
 roomNumberSelectElement.addEventListener('change', roomSelectChange);
 typeSelectElement.addEventListener('change', houseTypeSelectChange);
 titleInput.addEventListener('input', titleValidate);
 timeinSelectElement.addEventListener('change', timeinChange);
 timeoutSelectElement.addEventListener('change', timeoutChange);
 
-export {makesPageInactive,makesPageActive};
+export {makesPageInactive,makesPageActive,setFormSubmit};
