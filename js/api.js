@@ -1,29 +1,53 @@
-const getData = (onSuccess) => {
-  fetch('https://24.javascript.pages.academy/keksobooking/data')
+import  {renderMarkers} from './map.js';
+import {adForm,resetForm} from './form.js';
+import {closeMessage,showAlert} from './utils.js';
+import {setMapFilters,ADVERT_COUNT} from './filters.js';
+
+const SAVE_FORM_URL = 'https://24.javascript.pages.academy/keksobooking';
+const DATE_MAP_URL = 'https://24.javascript.pages.academy/keksobooking/data';
+
+const getData = () => {
+  fetch(DATE_MAP_URL)
     .then((response) => {
       if (response.ok) {
-        return response.json();
+        response.json()
+          .then((advert) => {
+            renderMarkers(advert.slice(0, ADVERT_COUNT));
+            setMapFilters();
+          });
       } else {
-        throw new Error('Что-то пошло не так');
+        showAlert('Не удалось загрузить данные');
       }
-    }).then((data) => {
-      onSuccess(data);
-    });
+    })
+    .catch(() => {
+      showAlert('Не удалось загрузить данные');},
+    );
 };
 
-const sendData = (onSuccess, onError, data) => {
-  const formData = new FormData(data);
-  fetch('https://24.javascript.pages.academy/keksobooking', {
-    method: 'POST',
-    body: formData,
-  }).then((response) => {
-    if (response.ok) {
-      onSuccess();
-    } else {
-      throw new Error('Не удалось отправить форму. Попробуйте ещё раз');
-    }
-  }).catch(() => {
-    onError('Не удалось отправить форму. Попробуйте ещё раз');
+const sendData = () => {
+  adForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+
+    const formData = new FormData(evt.target);
+
+    fetch(
+      SAVE_FORM_URL,
+      {
+        method: 'POST',
+        body: formData,
+      },
+    )
+      .then((response) => {
+        if (response.ok) {
+          closeMessage(document.querySelector('.success'));
+          resetForm();
+        } else {
+          closeMessage(document.querySelector('.error'));
+        }
+      })
+      .catch(() => {
+        closeMessage(document.querySelector('.error'));
+      });
   });
 };
 
