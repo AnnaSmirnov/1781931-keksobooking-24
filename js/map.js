@@ -1,92 +1,116 @@
 import {makesPageActive} from './form.js';
 import {createCustomPopup} from './popup.js';
+import {filterAdverts} from './filters.js';
 
+const ADVERT_COUNT = 10;
 const MAP_CENTER_LAT = 35.68390;
 const MAP_CENTER_LNG = 139.75323;
+const ZOOM_MAP = 12;
+const MAIN_MARKER_SIZES = [52, 52];
+const MAIN_MARKER_ANCHORS = [26, 52];
+const MAIN_MARKER_URL = 'img/main-pin.svg';
+const MARKER_SIZES = [40, 40];
+const MARKER_ANCHORS = [20, 40];
+const MARKER_URL = 'img/pin.svg';
 const address = document.querySelector('#address');
+const filtersForm = document.querySelector('.map__filters');
 
-const mapData = {
-  markers: [],
+let map;
+let markerGroup;
+let mainMarker;
+
+const mainMarkerIcon = L.icon({
+  iconUrl: MAIN_MARKER_URL,
+  iconSize: MAIN_MARKER_SIZES,
+  iconAnchor: MAIN_MARKER_ANCHORS,
+});
+
+const createMainMarker = () => {
+  mainMarker = L.marker(
+    {
+      lat: MAP_CENTER_LAT,
+      lng: MAP_CENTER_LNG,
+    },
+    {
+      draggable: true,
+      icon: mainMarkerIcon,
+    },
+  );
+  mainMarker.on('moveend', (evt) => {
+    address.value = `${evt.target.getLatLng().lat.toFixed(5)}, ${evt.target.getLatLng().lng.toFixed(5)}`;
+  });
+
+  mainMarker.addTo(map);
 };
 
-const map = L.map('map-canvas')
-  .on('load', () => {
-    makesPageActive();
-  })
-  .setView({
-    lat: MAP_CENTER_LAT,
-    lng: MAP_CENTER_LNG,
-  }, 14);
+const loadMap = (onLoad) => {
+  map = L.map('map-canvas')
+    .on('load', () => {
+      onLoad();
+      makesPageActive();
+    })
+    .setView({
+      lat: MAP_CENTER_LAT,
+      lng: MAP_CENTER_LNG,
+    }, ZOOM_MAP);
+  markerGroup = L.layerGroup().addTo(map);
+  createMainMarker();
+  L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    },
+  ).addTo(map);
+};
 
-L.tileLayer(
-  'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+const createMarker = (advert) => {
+  const icon = L.icon({
+    iconUrl: MARKER_URL,
+    iconSize: MARKER_SIZES,
+    iconAnchor: MARKER_ANCHORS,
+  });
+  const { location: {lat,lng}} = advert;
+  return L.marker({
+    lat,
+    lng,
   },
-).addTo(map);
-
-const mainPin = L.icon({
-  iconUrl: 'img/main-pin.svg',
-  iconSize: [52, 52],
-  iconAnchor: [26, 52],
-});
-
-const mainMarker = L.marker(
   {
-    lat: MAP_CENTER_LAT,
-    lng: MAP_CENTER_LNG,
-  },
-  {
-    draggable: true,
-    icon: mainPin,
-  },
-);
-
-mainMarker.addTo(map);
-
-mainMarker.on('moveend', (evt) => {
-  address.value = `${evt.target.getLatLng().lat.toFixed(5)}, ${evt.target.getLatLng().lng.toFixed(5)}`;
-});
-
-const renderMarkers = (offers) => {
-  offers.forEach((element) =>{
-
-    const pin = L.icon({
-      iconUrl: 'img/pin.svg',
-      iconSize: [40, 40],
-      iconAnchor: [20, 40],
-    });
-
-    const marker = L.marker(
-      {
-        lat: element.location.lat,
-        lng: element.location.lng,
-      },
-      {
-        icon:pin,
-      },
-    );
-
-    marker
-      .addTo(map)
-      .bindPopup(createCustomPopup(element));
-    mapData.markers.push(marker);
+    icon,
   });
 };
 
-
-const removeMarkers = () => {
-  mapData.markers.forEach((marker) => marker.remove());
-  mapData.markers = [];
+const addPinsToMap = (advertList) => {
+  advertList
+    .filter(filterAdverts)
+    .slice(0, ADVERT_COUNT).forEach((advert) => {
+      const marker = createMarker(advert);
+      marker.addTo(markerGroup);
+      marker.addTo(map).bindPopup(createCustomPopup(advert));
+    });
 };
 
-const resetMarker = () => {
+const resetMap = () => {
+  map.closePopup();
+  map.setView({
+    lat: MAP_CENTER_LAT,
+    lng: MAP_CENTER_LNG,
+  }, ZOOM_MAP);
   mainMarker.setLatLng({
     lat: MAP_CENTER_LAT,
     lng: MAP_CENTER_LNG,
   });
-  address.value = `${mainMarker.getLatLng().lat.toFixed(5)}, ${mainMarker.getLatLng().lng.toFixed(5)}`;
 };
 
-export {renderMarkers,removeMarkers,resetMarker,map};
+const debounce = (callback, timeoutDelay = 500) => {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
 
+const setFilterForm = (advertList) => {
+  filtersForm.addEventListener('change', debounce(() => addPinsToMap(advertList)));
+};
+
+export {addPinsToMap, resetMap, setFilterForm,loadMap};

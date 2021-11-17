@@ -1,29 +1,24 @@
 import {getData} from './api.js';
-import {resetMarker} from './map.js';
+import {resetMap} from './map.js';
+const MIN_TITLE_LENGTH = 30;
+const MAX_TITLE_LENGTH = 100;
+const MAP_CENTER_LAT = 35.68390;
+const MAP_CENTER_LNG = 139.75323;
+
 const adForm = document.querySelector('.ad-form');
 const adFormElements = adForm.querySelectorAll('.ad-form__element');
 const mapFilter = document.querySelector('.map__filters');
 const mapFilterElements = mapFilter.querySelectorAll('.map__filter');
-const MAP_CENTER_LAT = 35.68390;
-const MAP_CENTER_LNG = 139.75323;
-
 const titleInput = adForm.querySelector('#title');
-const MIN_TITLE_LENGTH = 30;
-const MAX_TITLE_LENGTH = 100;
-
 const roomNumberSelectElement = adForm.querySelector('#room_number');
 const capacitySelectElement = adForm.querySelector('#capacity');
-
 const typeSelectElement = document.querySelector('#type');
 const priceInputElement = document.querySelector('#price');
-
 const timeinSelectElement = document.querySelector('#timein');
 const timeoutSelectElement = document.querySelector('#timeout');
 const resetButton = adForm.querySelector('.ad-form__reset');
 
-
 document.querySelector('#address').value = `${MAP_CENTER_LAT}, ${MAP_CENTER_LNG}`;
-
 
 const makesPageInactive = () => {
   adFormElements.forEach((element) => {
@@ -45,6 +40,10 @@ const makesPageActive = () => {
   mapFilterElements.forEach((element) => {
     element.removeAttribute('disabled');
   });
+};
+
+const activateFilterForm = () => {
+  mapFilter.classList.remove('ad-form--disabled');
 };
 
 const titleValidate = () => {
@@ -140,7 +139,7 @@ const resetForm = () => {
   adForm.reset();
   document.querySelector('.map__filters').reset();
   document.querySelector('#address').value = `${MAP_CENTER_LAT}, ${MAP_CENTER_LNG}`;
-  resetMarker();
+  resetMap();
   getData();
 };
 
@@ -148,7 +147,7 @@ const resetForm = () => {
 resetButton.addEventListener('click', (evt) => {
   evt.preventDefault();
   resetForm();
-  resetMarker();
+  resetMap();
 });
 
 roomNumberSelectElement.addEventListener('change', roomSelectChange);
@@ -157,6 +156,4 @@ titleInput.addEventListener('input', titleValidate);
 timeinSelectElement.addEventListener('change', timeinChange);
 timeoutSelectElement.addEventListener('change', timeoutChange);
 
-export {makesPageInactive,makesPageActive,resetForm,adForm};
-
-
+export {makesPageInactive,makesPageActive,activateFilterForm,resetForm,adForm};
