@@ -1,12 +1,9 @@
-import {renderMarkers} from './map.js';
-
 const filtersForm = document.querySelector('.map__filters');
 const typeFilterElement = filtersForm.querySelector('select[name="housing-type"]');
 const priceFilterElement = filtersForm.querySelector('select[name="housing-price"]');
 const roomsFilterElement = filtersForm.querySelector('select[name="housing-rooms"]');
 const guestsFilterElement = filtersForm.querySelector('select[name="housing-guests"]');
 
-const ADVERT_COUNT = 10;
 const LOW_PRICE = 0;
 const MIDDLE_PRICE = 10000;
 const HIGH_PRICE = 50000;
@@ -29,27 +26,10 @@ const filterByFeatures = (advert) => {
   return featuresSelected.every((element) => features.includes(element));
 };
 
-const debounce = (callback, timeoutDelay = 500) => {
-  let timeoutId;
-  return (...rest) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
-  };
-};
+const filterAdverts = (advert) => filterByHouse(advert)
+&& filterByPrice(advert)
+&& filterByRooms(advert)
+&& filterByGuests(advert)
+&& filterByFeatures(advert);
 
-const setMapFilters = (offer) => {
-  filtersForm.addEventListener('change', debounce(() => {
-    const selectOffers = offer.filter((advert) =>
-      filterByHouse(advert)
-        &&filterByPrice(advert)
-        && filterByRooms(advert)
-        && filterByGuests(advert)
-        && filterByFeatures(advert));
-    renderMarkers(selectOffers.slice(0, ADVERT_COUNT));
-  },
-  ));
-};
-
-export {setMapFilters,ADVERT_COUNT};
-
-//const filterAdverts = (advert) => filterByHouse(advert) && filterByPrice(advert) && filterByRooms(advert) && filterByGuests(advert) && filterByFeatures(advert);
+export {filterAdverts};

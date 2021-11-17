@@ -1,8 +1,7 @@
 const successTemplate = document.querySelector('#success').content.querySelector('.success');
 const errorTemplate = document.querySelector('#error').content.querySelector('.error');
 const closeButton = errorTemplate.querySelector('.error__button');
-
-// Функция создания рандомного целого числа
+const ALERT_SHOW_TIME = 5000;
 
 const getRandomInteger = (min, max) => {
   if (min < 0 || max < 0){
@@ -17,8 +16,6 @@ const getRandomInteger = (min, max) => {
   }
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
-
-// Источник Кекс. Функция создания рандомного числа с плавающей точкой
 
 const getRandomFloat = (min, max, numberOfDecimalPlace) => {
   if (min < 0 || max < 0){
@@ -35,13 +32,11 @@ const getRandomFloat = (min, max, numberOfDecimalPlace) => {
   return randomFloat.toFixed(numberOfDecimalPlace);
 };
 
-//получить случайный элемент массива
 const getRandomArrayElement = (arr) => {
   const randomIndex = Math.floor(Math.random() * arr.length);
   return arr[randomIndex];
 };
 
-// Создание массива случайной длины
 const getRandomItemsArray = (array) => {
   const items = array.slice();
   const randomCount = getRandomInteger(1, array.length-1);
@@ -54,14 +49,10 @@ const getRandomItemsArray = (array) => {
   return resultArray;
 };
 
-// Сообщение об успешном создании объявления
-
 const showMessageSuccess = () => {
   const successElement = successTemplate.cloneNode(true);
   document.body.append(successElement);
 };
-
-// Сообщение об ошибке создания объявления
 
 const showMessageError = () => {
   const errorElement = errorTemplate.cloneNode(true);
@@ -83,14 +74,10 @@ const closeMessage = (modal) => {
   });
 };
 
-// Закрытие сообщения
 closeButton.addEventListener('click', (evt) => {
   evt.preventDefault();
   closeMessage();
 });
-
-
-const ALERT_SHOW_TIME = 5000;
 
 const showAlert = () => {
   const alertContainer = document.createElement('div');
@@ -112,4 +99,5 @@ const showAlert = () => {
     alertContainer.remove();
   }, ALERT_SHOW_TIME);
 };
+
 export {getRandomInteger, getRandomFloat, getRandomItemsArray, getRandomArrayElement, showMessageSuccess, showMessageError, closeMessage,showAlert};
