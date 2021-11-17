@@ -1,5 +1,6 @@
-import {adverts} from './popup.js';
-//import {makesPageInactive,makesPageActive} from './form.js';
-import {createPointsOfMap} from './map.js';
-createPointsOfMap(adverts);
-
+import './popup.js';
+//import {makesPageInactive} from './form.js';
+import {sendData, getData} from './api.js';
+//makesPageInactive();
+getData();
+sendData();

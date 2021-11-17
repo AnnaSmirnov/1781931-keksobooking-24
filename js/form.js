@@ -1,7 +1,11 @@
+import {getData} from './api.js';
+import {resetMarker} from './map.js';
 const adForm = document.querySelector('.ad-form');
 const adFormElements = adForm.querySelectorAll('.ad-form__element');
 const mapFilter = document.querySelector('.map__filters');
 const mapFilterElements = mapFilter.querySelectorAll('.map__filter');
+const MAP_CENTER_LAT = 35.68390;
+const MAP_CENTER_LNG = 139.75323;
 
 const titleInput = adForm.querySelector('#title');
 const MIN_TITLE_LENGTH = 30;
@@ -15,8 +19,12 @@ const priceInputElement = document.querySelector('#price');
 
 const timeinSelectElement = document.querySelector('#timein');
 const timeoutSelectElement = document.querySelector('#timeout');
+const resetButton = adForm.querySelector('.ad-form__reset');
 
-//активный и неактивный режим
+
+document.querySelector('#address').value = `${MAP_CENTER_LAT}, ${MAP_CENTER_LNG}`;
+
+
 const makesPageInactive = () => {
   adFormElements.forEach((element) => {
     element.setAttribute('disabled', '');
@@ -39,7 +47,6 @@ const makesPageActive = () => {
   });
 };
 
-//Валидация заголовка объявления
 const titleValidate = () => {
   const valueLength = titleInput.value.length;
 
@@ -53,7 +60,6 @@ const titleValidate = () => {
   titleInput.reportValidity();
 };
 
-//Валидация количества комнат
 const roomSelectChange = () => {
   const choosenValue = (roomNumberSelectElement.value === '100') ? '0' : roomNumberSelectElement.value;
   for (let i = 0; i < capacitySelectElement.length; i++) {
@@ -83,7 +89,6 @@ const roomSelectChange = () => {
   capacitySelectElement.reportValidity();
 };
 
-//тип жилья
 const validatePrice = () => {
   if (Number(priceInputElement.value) < priceInputElement.min) {
     priceInputElement.setCustomValidity(`Минимальная цена ${priceInputElement.min}`);
@@ -121,10 +126,8 @@ const houseTypeSelectChange = () => {
       break;
   }
   setMinPrice(minValidatorValue);
-  validatePrice();
 };
 
-//синхронизация времени
 const timeinChange = () => {
   timeoutSelectElement.value =  timeinSelectElement.value;
 };
@@ -133,10 +136,27 @@ const timeoutChange = () => {
   timeinSelectElement.value = timeoutSelectElement.value;
 };
 
+const resetForm = () => {
+  adForm.reset();
+  document.querySelector('.map__filters').reset();
+  document.querySelector('#address').value = `${MAP_CENTER_LAT}, ${MAP_CENTER_LNG}`;
+  resetMarker();
+  getData();
+};
+
+
+resetButton.addEventListener('click', (evt) => {
+  evt.preventDefault();
+  resetForm();
+  resetMarker();
+});
+
 roomNumberSelectElement.addEventListener('change', roomSelectChange);
 typeSelectElement.addEventListener('change', houseTypeSelectChange);
 titleInput.addEventListener('input', titleValidate);
 timeinSelectElement.addEventListener('change', timeinChange);
 timeoutSelectElement.addEventListener('change', timeoutChange);
 
-export {makesPageInactive,makesPageActive};
+export {makesPageInactive,makesPageActive,resetForm,adForm};
+
+
