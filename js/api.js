@@ -1,5 +1,5 @@
 import {adForm,resetForm} from './form.js';
-import {showMessageSuccess,showMessageError,closeMessage} from './utils.js';
+import {closeMessage} from './utils.js';
 import { showAlert } from './utils.js';
 
 const SAVE_FORM_URL = 'https://24.javascript.pages.academy/keksobooking';
@@ -10,9 +10,7 @@ const getData = (onSuccess) => {
     .then((response) => {
       if (response.ok) {
         response.json()
-          .then((offers) => {
-            onSuccess(offers);
-          });
+          .then(onSuccess);
       } else {
         showAlert('Не удалось загрузить данные');
       }
@@ -37,17 +35,14 @@ const sendData = () => {
     )
       .then((response) => {
         if (response.ok) {
-          showMessageSuccess();
-          closeMessage(document.querySelector('.success'));
+          closeMessage('success');
           resetForm();
         } else {
-          showMessageError();
-          closeMessage(document.querySelector('.error'));
+          closeMessage('error');
         }
       })
       .catch(() => {
-        showMessageError();
-        closeMessage(document.querySelector('.error'));
+        closeMessage('error');
       });
   });
 };
