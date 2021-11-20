@@ -1,3 +1,5 @@
+import {clearMarkers,addPinsToMap} from './map.js';
+
 const filtersForm = document.querySelector('.map__filters');
 const typeFilterElement = filtersForm.querySelector('select[name="housing-type"]');
 const priceFilterElement = filtersForm.querySelector('select[name="housing-price"]');
@@ -26,10 +28,26 @@ const filterByFeatures = (advert) => {
   return featuresSelected.every((element) => features.includes(element));
 };
 
-const filterAdverts = (advert) => filterByHouse(advert)
-&& filterByPrice(advert)
-&& filterByRooms(advert)
-&& filterByGuests(advert)
-&& filterByFeatures(advert);
+const debounce = (callback, timeoutDelay = 500) => {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
 
-export {filterAdverts};
+const setMapFilters = (offer) => {
+  filtersForm.addEventListener('change', debounce(() => {
+    const selectOffers = offer.filter((advert) =>
+      filterByHouse(advert)
+    && filterByPrice(advert)
+    && filterByRooms(advert)
+    && filterByGuests(advert)
+    && filterByFeatures(advert));
+    clearMarkers();
+    addPinsToMap(selectOffers.slice(0, 10));
+  },
+  ));
+};
+
+export {setMapFilters};

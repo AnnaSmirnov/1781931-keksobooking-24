@@ -1,5 +1,7 @@
 import {getData} from './api.js';
 import {resetMap} from './map.js';
+import {removeAvatarFoto} from './avatar.js';
+
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
 const MAP_CENTER_LAT = 35.68390;
@@ -10,12 +12,12 @@ const adFormElements = adForm.querySelectorAll('.ad-form__element');
 const mapFilter = document.querySelector('.map__filters');
 const mapFilterElements = mapFilter.querySelectorAll('.map__filter');
 const titleInput = adForm.querySelector('#title');
-const roomNumberSelectElement = adForm.querySelector('#room_number');
-const capacitySelectElement = adForm.querySelector('#capacity');
-const typeSelectElement = document.querySelector('#type');
-const priceInputElement = document.querySelector('#price');
-const timeinSelectElement = document.querySelector('#timein');
-const timeoutSelectElement = document.querySelector('#timeout');
+const roomNumberElement = adForm.querySelector('#room_number');
+const capacityElement = adForm.querySelector('#capacity');
+const typeElement = document.querySelector('#type');
+const priceElement = document.querySelector('#price');
+const timeinElement = document.querySelector('#timein');
+const timeoutElement = document.querySelector('#timeout');
 const resetButton = adForm.querySelector('.ad-form__reset');
 
 document.querySelector('#address').value = `${MAP_CENTER_LAT}, ${MAP_CENTER_LNG}`;
@@ -46,7 +48,7 @@ const activateFilterForm = () => {
   mapFilter.classList.remove('ad-form--disabled');
 };
 
-const titleValidate = () => {
+const onTitleInput = () => {
   const valueLength = titleInput.value.length;
 
   if (valueLength < MIN_TITLE_LENGTH) {
@@ -59,55 +61,39 @@ const titleValidate = () => {
   titleInput.reportValidity();
 };
 
-const roomSelectChange = () => {
-  const choosenValue = (roomNumberSelectElement.value === '100') ? '0' : roomNumberSelectElement.value;
-  for (let i = 0; i < capacitySelectElement.length; i++) {
-    capacitySelectElement[i].disabled = true;
-    if (capacitySelectElement[i].value === choosenValue) {
-      capacitySelectElement[i].disabled = false;
+const onCapacityChange = () => {
+  const choosenValue = (roomNumberElement.value === '100') ? '0' : roomNumberElement.value;
+  for (let i = 0; i < capacityElement.length; i++) {
+    capacityElement[i].disabled = true;
+    if (capacityElement[i].value === choosenValue) {
+      capacityElement[i].disabled = false;
     }
-    if (capacitySelectElement[i].value <= choosenValue && capacitySelectElement[i].value > 0) {
-      capacitySelectElement[i].disabled = false;
+    if (capacityElement[i].value <= choosenValue && capacityElement[i].value > 0) {
+      capacityElement[i].disabled = false;
     }
   }
+  capacityElement.value = capacityElement.querySelector('option:not([disabled])').value;
 
-  switch(roomNumberSelectElement.value) {
-    case '1':
-      choosenValue(['1']);
-      break;
-    case '2':
-      choosenValue(['1', '2']);
-      break;
-    case '3':
-      choosenValue(['1', '2', '3']);
-      break;
-    case '100':
-      choosenValue(['0']);
-      break;
-  }
-  capacitySelectElement.reportValidity();
+  capacityElement.reportValidity();
 };
 
-const validatePrice = () => {
-  if (Number(priceInputElement.value) < priceInputElement.min) {
-    priceInputElement.setCustomValidity(`Минимальная цена ${priceInputElement.min}`);
+const onPriceInput = () => {
+  if (Number(priceElement.value) < priceElement.min) {
+    priceElement.setCustomValidity(`Минимальная цена ${priceElement.min}`);
   }
   else {
-    priceInputElement.setCustomValidity('');
+    priceElement.setCustomValidity('');
   }
-  priceInputElement.reportValidity();
+  priceElement.reportValidity();
 };
-priceInputElement.addEventListener('input', () => {
-  validatePrice();
-});
 
-const houseTypeSelectChange = () => {
+const onTypeChange = () => {
   const setMinPrice = (minPrice) => {
-    priceInputElement.min = minPrice;
-    priceInputElement.placeholder = minPrice;
+    priceElement.min = minPrice;
+    priceElement.placeholder = minPrice;
   };
   let minValidatorValue;
-  switch(typeSelectElement.value) {
+  switch(typeElement.value) {
     case 'bungalow':
       minValidatorValue = 0;
       break;
@@ -127,33 +113,36 @@ const houseTypeSelectChange = () => {
   setMinPrice(minValidatorValue);
 };
 
-const timeinChange = () => {
-  timeoutSelectElement.value =  timeinSelectElement.value;
+const onTimeinChange = () => {
+  timeoutElement.value =  timeinElement.value;
 };
 
-const timeoutChange = () => {
-  timeinSelectElement.value = timeoutSelectElement.value;
+const onTimeoutChange = () => {
+  timeinElement.value = timeoutElement.value;
 };
 
 const resetForm = () => {
   adForm.reset();
   document.querySelector('.map__filters').reset();
   document.querySelector('#address').value = `${MAP_CENTER_LAT}, ${MAP_CENTER_LNG}`;
+  onTypeChange(true);
+  onCapacityChange();
   resetMap();
   getData();
 };
-
 
 resetButton.addEventListener('click', (evt) => {
   evt.preventDefault();
   resetForm();
   resetMap();
+  removeAvatarFoto();
 });
 
-roomNumberSelectElement.addEventListener('change', roomSelectChange);
-typeSelectElement.addEventListener('change', houseTypeSelectChange);
-titleInput.addEventListener('input', titleValidate);
-timeinSelectElement.addEventListener('change', timeinChange);
-timeoutSelectElement.addEventListener('change', timeoutChange);
+roomNumberElement.addEventListener('change', onCapacityChange);
+priceElement.addEventListener('input', onPriceInput);
+typeElement.addEventListener('change', onTypeChange);
+titleInput.addEventListener('input', onTitleInput);
+timeinElement.addEventListener('change', onTimeinChange);
+timeoutElement.addEventListener('change', onTimeoutChange);
 
 export {makesPageInactive,makesPageActive,activateFilterForm,resetForm,adForm};

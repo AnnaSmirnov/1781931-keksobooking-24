@@ -1,4 +1,5 @@
-const successTemplate = document.querySelector('#success').content.querySelector('.success');
+import {removeAvatarFoto} from './avatar.js';
+
 const errorTemplate = document.querySelector('#error').content.querySelector('.error');
 const closeButton = errorTemplate.querySelector('.error__button');
 const ALERT_SHOW_TIME = 5000;
@@ -49,34 +50,33 @@ const getRandomItemsArray = (array) => {
   return resultArray;
 };
 
-const showMessageSuccess = () => {
-  const successElement = successTemplate.cloneNode(true);
-  document.body.append(successElement);
+const onEscapeKeyPress = (evt) => {
+  if (evt.key === 'Escape') {
+    window.removeEventListener('keydown', onEscapeKeyPress);
+    closeMessage();
+    removeAvatarFoto();
+  }
 };
 
-const showMessageError = () => {
-  const errorElement = errorTemplate.cloneNode(true);
-  document.body.append(errorElement);
-};
+function closeMessage(templateId) {
+  const bodyNode = document.body;
+  const messageTemplateNode = document.querySelector(`#${templateId}`).content;
+  const messageNode = messageTemplateNode.firstElementChild.cloneNode(true);
 
-const isEscapeKey = (evt) => evt.key === 'Escape';
-
-const closeMessage = (modal) => {
-  document.addEventListener('keydown', (evt) => {
-    if (isEscapeKey(evt)) {
-      evt.preventDefault();
-      modal.remove();
-    }
-  });
-
-  window.addEventListener('click', () => {
-    modal.remove();
-  });
-};
+  const onMessageClick = () => {
+    messageNode.remove();
+    removeAvatarFoto();
+    window.removeEventListener('keydown', onEscapeKeyPress);
+  };
+  messageNode.addEventListener('click', onMessageClick);
+  window.addEventListener('keydown', onEscapeKeyPress);
+  bodyNode.appendChild(messageNode);
+}
 
 closeButton.addEventListener('click', (evt) => {
   evt.preventDefault();
   closeMessage();
+  removeAvatarFoto();
 });
 
 const showAlert = () => {
@@ -100,4 +100,4 @@ const showAlert = () => {
   }, ALERT_SHOW_TIME);
 };
 
-export {getRandomInteger, getRandomFloat, getRandomItemsArray, getRandomArrayElement, showMessageSuccess, showMessageError, closeMessage,showAlert};
+export {getRandomInteger, getRandomFloat, getRandomItemsArray, getRandomArrayElement, closeMessage,showAlert};

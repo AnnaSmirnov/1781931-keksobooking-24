@@ -1,6 +1,5 @@
-import {makesPageActive} from './form.js';
+import {activateFilterForm} from './form.js';
 import {createCustomPopup} from './popup.js';
-import {filterAdverts} from './filters.js';
 
 const ADVERT_COUNT = 10;
 const MAP_CENTER_LAT = 35.68390;
@@ -13,7 +12,6 @@ const MARKER_SIZES = [40, 40];
 const MARKER_ANCHORS = [20, 40];
 const MARKER_URL = 'img/pin.svg';
 const address = document.querySelector('#address');
-const filtersForm = document.querySelector('.map__filters');
 
 let map;
 let markerGroup;
@@ -43,11 +41,12 @@ const createMainMarker = () => {
   mainMarker.addTo(map);
 };
 
-const loadMap = (onLoad) => {
+const onLoadMap = (onLoad) => {
   map = L.map('map-canvas')
     .on('load', () => {
       onLoad();
-      makesPageActive();
+
+      activateFilterForm();
     })
     .setView({
       lat: MAP_CENTER_LAT,
@@ -81,7 +80,6 @@ const createMarker = (advert) => {
 
 const addPinsToMap = (advertList) => {
   advertList
-    .filter(filterAdverts)
     .slice(0, ADVERT_COUNT).forEach((advert) => {
       const marker = createMarker(advert);
       marker.addTo(markerGroup);
@@ -101,16 +99,6 @@ const resetMap = () => {
   });
 };
 
-const debounce = (callback, timeoutDelay = 500) => {
-  let timeoutId;
-  return (...rest) => {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
-  };
-};
+const clearMarkers = () => markerGroup.clearLayers();
 
-const setFilterForm = (advertList) => {
-  filtersForm.addEventListener('change', debounce(() => addPinsToMap(advertList)));
-};
-
-export {addPinsToMap, resetMap, setFilterForm,loadMap};
+export {addPinsToMap, resetMap,onLoadMap,clearMarkers};
