@@ -1,4 +1,6 @@
-import {adForm,resetForm} from './form.js';
+import {adForm, resetForm} from './form.js';
+import {clearMarkers} from './map.js';
+import {resetMapFilters} from './filters.js';
 import {closeMessage} from './utils.js';
 import { showAlert } from './utils.js';
 
@@ -23,6 +25,8 @@ const getData = (onSuccess) => {
 const sendData = () => {
   adForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
+    resetMapFilters();
+    clearMarkers();
 
     const formData = new FormData(evt.target);
 
@@ -37,6 +41,7 @@ const sendData = () => {
         if (response.ok) {
           closeMessage('success');
           resetForm();
+
         } else {
           closeMessage('error');
         }

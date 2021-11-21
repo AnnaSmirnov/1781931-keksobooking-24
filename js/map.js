@@ -1,4 +1,4 @@
-import {activateFilterForm} from './form.js';
+import {removeBlockForm} from './form.js';
 import {createCustomPopup} from './popup.js';
 
 const ADVERT_COUNT = 10;
@@ -46,7 +46,7 @@ const onLoadMap = (onLoad) => {
     .on('load', () => {
       onLoad();
 
-      activateFilterForm();
+      removeBlockForm();
     })
     .setView({
       lat: MAP_CENTER_LAT,
@@ -87,8 +87,7 @@ const addPinsToMap = (advertList) => {
     });
 };
 
-const resetMap = () => {
-  map.closePopup();
+const returnMapPinStarting = () => {
   map.setView({
     lat: MAP_CENTER_LAT,
     lng: MAP_CENTER_LNG,
@@ -97,8 +96,12 @@ const resetMap = () => {
     lat: MAP_CENTER_LAT,
     lng: MAP_CENTER_LNG,
   });
+
+  map.closePopup();
+
+  address.value = `${MAP_CENTER_LAT}, ${MAP_CENTER_LNG}`;
 };
 
 const clearMarkers = () => markerGroup.clearLayers();
 
-export {addPinsToMap, resetMap,onLoadMap,clearMarkers};
+export {addPinsToMap,returnMapPinStarting,onLoadMap,clearMarkers,ADVERT_COUNT};

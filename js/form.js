@@ -1,6 +1,7 @@
 import {getData} from './api.js';
-import {resetMap} from './map.js';
+import {returnMapPinStarting} from './map.js';
 import {removeAvatarFoto} from './avatar.js';
+import {resetMapFilters} from './filters.js';
 
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
@@ -9,8 +10,6 @@ const MAP_CENTER_LNG = 139.75323;
 
 const adForm = document.querySelector('.ad-form');
 const adFormElements = adForm.querySelectorAll('.ad-form__element');
-const mapFilter = document.querySelector('.map__filters');
-const mapFilterElements = mapFilter.querySelectorAll('.map__filter');
 const titleInput = adForm.querySelector('#title');
 const roomNumberElement = adForm.querySelector('#room_number');
 const capacityElement = adForm.querySelector('#capacity');
@@ -22,30 +21,19 @@ const resetButton = adForm.querySelector('.ad-form__reset');
 
 document.querySelector('#address').value = `${MAP_CENTER_LAT}, ${MAP_CENTER_LNG}`;
 
-const makesPageInactive = () => {
+const addBlockForm = () => {
   adFormElements.forEach((element) => {
     element.setAttribute('disabled', '');
   });
   adForm.classList.add('ad-form--disabled');
-  mapFilter.classList.add('map__filters--disabled');
-  mapFilterElements.forEach((element) => {
-    element.setAttribute('disabled', '');
-  });
 };
 
-const makesPageActive = () => {
+
+const removeBlockForm = () => {
   adFormElements.forEach((element) => {
     element.removeAttribute('disabled');
   });
   adForm.classList.remove('ad-form--disabled');
-  mapFilter.classList.remove('map__filters--disabled');
-  mapFilterElements.forEach((element) => {
-    element.removeAttribute('disabled');
-  });
-};
-
-const activateFilterForm = () => {
-  mapFilter.classList.remove('ad-form--disabled');
 };
 
 const onTitleInput = () => {
@@ -121,20 +109,20 @@ const onTimeoutChange = () => {
   timeinElement.value = timeoutElement.value;
 };
 
-const resetForm = () => {
-  adForm.reset();
+const resetForm = () => {  adForm.reset();
   document.querySelector('.map__filters').reset();
   document.querySelector('#address').value = `${MAP_CENTER_LAT}, ${MAP_CENTER_LNG}`;
   onTypeChange(true);
   onCapacityChange();
-  resetMap();
+  returnMapPinStarting();
   getData();
 };
 
 resetButton.addEventListener('click', (evt) => {
   evt.preventDefault();
   resetForm();
-  resetMap();
+  resetMapFilters();
+  returnMapPinStarting();
   removeAvatarFoto();
 });
 
@@ -145,4 +133,4 @@ titleInput.addEventListener('input', onTitleInput);
 timeinElement.addEventListener('change', onTimeinChange);
 timeoutElement.addEventListener('change', onTimeoutChange);
 
-export {makesPageInactive,makesPageActive,activateFilterForm,resetForm,adForm};
+export {addBlockForm,removeBlockForm,resetForm,adForm};

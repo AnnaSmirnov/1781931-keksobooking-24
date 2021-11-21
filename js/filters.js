@@ -1,6 +1,7 @@
 import {clearMarkers,addPinsToMap} from './map.js';
 
 const filtersForm = document.querySelector('.map__filters');
+const filtersElements = Array.from(filtersForm.children);
 const typeFilterElement = filtersForm.querySelector('select[name="housing-type"]');
 const priceFilterElement = filtersForm.querySelector('select[name="housing-price"]');
 const roomsFilterElement = filtersForm.querySelector('select[name="housing-rooms"]');
@@ -9,6 +10,21 @@ const guestsFilterElement = filtersForm.querySelector('select[name="housing-gues
 const LOW_PRICE = 0;
 const MIDDLE_PRICE = 10000;
 const HIGH_PRICE = 50000;
+
+const addBlockFiltersForm = () => {
+  filtersForm.classList.add('map__filters--disabled');
+  filtersElements.forEach((element) => {
+    element.disabled = true;
+  });
+};
+addBlockFiltersForm();
+
+const removeBlockFiltersForm = () => {
+  filtersForm.classList.remove('map__filters--disabled');
+  filtersElements.forEach((element) => {
+    element.disabled = false;
+  });
+};
 
 const filterByHouse = (advert) => typeFilterElement.value === 'any' || typeFilterElement.value === advert.offer.type;
 
@@ -50,4 +66,8 @@ const setMapFilters = (offer) => {
   ));
 };
 
-export {setMapFilters};
+const resetMapFilters = () => {
+  filtersForm.reset();
+};
+
+export {removeBlockFiltersForm,setMapFilters,resetMapFilters};
