@@ -109,7 +109,8 @@ const onTimeoutChange = () => {
   timeinElement.value = timeoutElement.value;
 };
 
-const resetForm = () => {  adForm.reset();
+const resetForm = () => {
+  adForm.reset();
   document.querySelector('.map__filters').reset();
   document.querySelector('#address').value = `${MAP_CENTER_LAT}, ${MAP_CENTER_LNG}`;
   onTypeChange(true);
