@@ -1,4 +1,5 @@
-import {clearMarkers,addPinsToMap} from './map.js';
+import {ADVERT_COUNT,clearMarkers,addPinsToMap} from './map.js';
+import {getData} from './api.js';
 
 const filtersForm = document.querySelector('.map__filters');
 const filtersElements = Array.from(filtersForm.children);
@@ -17,7 +18,6 @@ const addBlockFiltersForm = () => {
     element.disabled = true;
   });
 };
-addBlockFiltersForm();
 
 const removeBlockFiltersForm = () => {
   filtersForm.classList.remove('map__filters--disabled');
@@ -61,13 +61,17 @@ const setMapFilters = (offer) => {
     && filterByGuests(advert)
     && filterByFeatures(advert));
     clearMarkers();
-    addPinsToMap(selectOffers.slice(0, 10));
+    addPinsToMap(selectOffers.slice(0, ADVERT_COUNT));
   },
   ));
 };
 
 const resetMapFilters = () => {
-  filtersForm.reset();
+  clearMarkers();
+  getData((offerList) => {
+    addPinsToMap(offerList);
+    setMapFilters(offerList);
+  });
 };
 
-export {removeBlockFiltersForm,setMapFilters,resetMapFilters};
+export {addBlockFiltersForm,removeBlockFiltersForm,setMapFilters,resetMapFilters};

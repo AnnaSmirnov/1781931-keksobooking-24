@@ -1,4 +1,3 @@
-import {getData} from './api.js';
 import {returnMapPinStarting} from './map.js';
 import {removeAvatarFoto} from './avatar.js';
 import {resetMapFilters} from './filters.js';
@@ -116,14 +115,12 @@ const resetForm = () => {
   onTypeChange(true);
   onCapacityChange();
   returnMapPinStarting();
-  getData();
+  resetMapFilters();
 };
 
 resetButton.addEventListener('click', (evt) => {
   evt.preventDefault();
   resetForm();
-  resetMapFilters();
-  returnMapPinStarting();
   removeAvatarFoto();
 });
 
